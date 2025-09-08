@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Registration</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f4f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .registration-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 600px;
+    }
+    #response {
+      white-space: pre-wrap; /* Preserve newlines */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="registration-box">
+    <h3 class="text-center mb-4">Student Registration</h3>
+    <form id="registrationForm">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <input type="text" class="form-control" name="firstname" placeholder="First Name" required />
+        </div>
+        <div class="col-md-6 mb-3">
+          <input type="text" class="form-control" name="lastname" placeholder="Last Name" required />
+        </div>
+        <div class="col-md-12 mb-3">
+          <input type="text" class="form-control" name="father" placeholder="Father's Name" required />
+        </div>
+        <div class="col-md-6 mb-3">
+          <input type="date" class="form-control" name="dob" required />
+        </div>
+        <div class="col-md-6 mb-3">
+          <select class="form-control" name="gender" required>
+            <option value="">Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <input type="email" class="form-control" name="email" placeholder="Email" required />
+        </div>
+        <div class="col-md-6 mb-3">
+          <input type="tel" class="form-control" name="phone" placeholder="Phone Number" required />
+        </div>
+        <div class="col-md-6 mb-3">
+          <input type="number" class="form-control" name="year" placeholder="Course Year" required min="1" />
+        </div>
+        <div class="col-md-6 mb-3">
+          <input type="date" class="form-control" name="admissiondate" required />
+        </div>
+      </div>
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary">Register</button>
+      </div>
+
+      <p id="response" class="text-center mt-3"></p>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('registrationForm');
+    const responseDiv = document.getElementById('response');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      responseDiv.style.color = 'black';
+      responseDiv.innerText = 'Submitting...';
+
+      const formData = new FormData(form);
+      const urlEncodedData = new URLSearchParams();
+
+      for (const [key, value] of formData.entries()) {
+        urlEncodedData.append(key, value);
+      }
+
+      try {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbwRih_et750FDuJSX-WUY4WfqsqdsZj8pfE39KyVXLxFFaRc7kRaeBNn8XYBASwcGry/exec', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: urlEncodedData
+        });
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          responseDiv.style.color = 'green';
+          responseDiv.innerText = result.message + "\nUID: " + result.UID;
+          form.reset();
+        } else {
+          responseDiv.style.color = 'red';
+          responseDiv.innerText = "Error: " + result.message;
+        }
+      } catch (error) {
+        responseDiv.style.color = 'red';
+        responseDiv.innerText = "Request Failed: " + error.message;
+      }
+    });
+  </script>
+
+</body>
+</html>
